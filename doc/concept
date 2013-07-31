@@ -1,0 +1,143 @@
+= Stummis Machine =
+(Yeah, I am not good in finding names)
+
+Stummis Machine is a (hypotetical) computer designed from scratch for
+academical purposes.
+It has its own processor with its own (extremly minimalistic) instruction set
+as well as its own assembly language.
+
+Both, the assembler and VM are implemented in java.
+
+== The Hardware ==
+
+The Machine has one "Data Area" with a size of 64k, it holds the current
+program code as well as other data. 63k behaves as plain memory. (You read what
+you write). The upper 1k are reserved as IO-Ports for periphials.
+
+the CPU has 4 registers:
+
+IPTR (Instruction Pointer):
+Holding the position of the current Instruction. It increments automatically
+with each cycle to the next instruction.
+
+DPTR (Data Pointer):
+Holding a pointer to the machines Data area.
+
+ARG (Argument):
+some commands need arguments which are read from this register.
+
+USR (User Register):
+A register holding user data
+
+All registers are 16 bit and initialized with 0 on startup.
+
+== Periphials ==
+Currently there are 2 Periphials by convention: An Input and Output device.
+
+The Output-Device is connected to IO-ports 0 (0xFC00) and 1 (0xFC01).
+To write an byte to the device, set IO-Port 0 to the value and IO-Port 1 to an
+value !=0. the Output-Device will set the IO-Port to 0 when it recognizes the
+value
+
+The Input-device is connected to IO-Ports 2 and 3
+IOPort 3 will be set to an value != 0 if there is data available, port 2 will
+contain the last input byte. After the input value has been read, port 3 has to
+be set to 0.
+
+== The Machine Code ==
+
+Every command has an size of 8 bit. On every cycle the CPU loads the command on
+IPTR and executes it. After this IPTR gets incremented by 1, unless an IAJMP,
+IRJMP or ICJMP was executed. If a SET was executed IPTR gets incremented by 3
+instead of 1.
+
+== Commands ==
+(Byteval - ASM-Name - Description)
+
+Terms:
+Byte - 8 bit value
+Word - 16 bit value
+
+Common:
+00 - NUL - Do nothing
+FF - STOP - Stops the Machine
+
+ARG Manipulation:
+01 - AGETB - loads the value on Byte at DPTR into ARG
+02 - AGETW - loads the value on Word starting at DPTR into ARG
+03 - APUTB - writes the lower 8 bits from ARG into the byte on DPTR.
+04 - APUTW - writes the word from ARG into the word starting at DPTR.
+05 - ASET - sets ARG to the value given by the 2 bytes after IPTR
+06 - AINC - Increments the value in ARG by 1
+07 - ADEC - Decrements the value in ARG by 1
+
+USR Manipulation:
+08 - UGETB
+09 - UGETW
+0A - UPUTB
+0B - UPUTW
+0C - USET
+0D - UINC
+0E - UDEC
+... all the same as the ARG-Manipulation commands
+
+DPTR Manipulation:
+0F - DAJMP - Moves DPTR to the absolut position given by ARG
+10 - DRJMP - Moves DPTR forward the bytes given by ARG
+
+IPTR Manipulation:
+11 - IAJMP - Moves IPTR to the absolut position given by ARG
+12 - IRJMP - Moves IPTR forward the bytes given by ARG
+13 - ICJMP - Moves IPTR forward by one if ARG == 0 or 4 if ARG != 0
+
+If the CPU hits an unknown Command it will stop running.
+If DPTR or IPTR are attempting to jump over the 64k limit they behave as in a
+ring-buffer
+
+== ASM ==
+Terms:
+
+A number is:
+- A decimal string starting with an decimal > 0
+- An hexadecimal string starting by 0x
+- An octal string starting with 0
+
+A placeholder is:
+- The name of an constant starting with % or $
+
+
+Mainly the ASM is just a list of the given not case sensitive commands,
+separated by linebreaks.
+The SET-Command needs an argument, which is either a number or a placeholder
+
+Lines starting with $ defines constants with a number:
+
+   $OUT 0xFC00
+
+Lines starting with : will be considered as label:
+
+   :LABEL
+
+Labels are in fact constants, but there value is implizit set by the assembler
+with the value of their byte address
+
+The following expansion on placeholders will be performed:
+
+$VALUE will be replaced with the given constant
+%VALUE will be replaced with the difference between the given constant
+   and the current byte address. (useful for relative jumps)
+The length of the expansion is context sensitive. On SET and DATAW they will 
+expand to a word. On DATAB it will expand to an byte. If the constant doesn't
+fit in an byte, only the lower 8 bits are used.
+
+all placeholders can be suffixed by + or - and a number to adjust the value of
+the replacement.
+
+ASM supports different DATA commands:
+ - DATAB to add one raw byte to this position
+ - DATAW to add one raw word to this position
+ - DATAS to add an ASCII-String to this position
+
+  DATAB 0x42
+  DATAW $MAGICVALUE+0x23
+  DATAS HELLO WORLD
