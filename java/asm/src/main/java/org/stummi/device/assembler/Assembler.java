@@ -37,7 +37,7 @@ public class Assembler {
 	public void assemble() throws AssemblyException, IOException {
 		assembleInstructions();
 		assembleFutures();
-		out.write(bytes);;
+		out.write(bytes, 0, buffer.position());
 	}
 
 	private void assembleInstructions() throws IOException, AssemblyException {
