@@ -99,6 +99,10 @@ int sd_run(void)
         case IAJMP: sd_iajmp(); break;
         case IRJMP: sd_irjmp(); break;
         case ICJMP: sd_icjmp(); break;
+        
+        default:
+            /* unknown opcode */
+            halt = 1;
         }
     }
 
