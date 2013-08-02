@@ -18,7 +18,9 @@ register.c: register.h
 
 memory.c: memory.h
 
-vm.c: vm.h instruction.h
+vm.c: vm.h instruction.h memory.h register.h
+
+main.c: vm.h
 
 .PHONY: clean
 clean:
