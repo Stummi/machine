@@ -2,6 +2,7 @@
 #define SD_MEMORY_H
 
 #include <inttypes.h>
+#include <stdio.h>
 
 /*
     initializes the virtual stummidevice memory (64 KB)
@@ -10,7 +11,7 @@
         0 => memory could not me allocated
         1 => everything is fine
 */
-int sd_memory_init(void);
+int sd_memory_init(FILE * file);
 
 uint8_t  sd_memory_read_8(uint16_t address);
 uint16_t sd_memory_read_16(uint16_t address);

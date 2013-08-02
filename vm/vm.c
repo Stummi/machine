@@ -2,6 +2,7 @@
 #include "memory.h"
 #include "register.h"
 #include "instruction.h"
+#include "platform.h"
 
 #include <stdio.h>
 
@@ -59,15 +60,17 @@ static void sd_icjmp(void)
 
 /* the main loop */
 
-int sd_run(void)
+int sd_run(FILE * file)
 {
     uint8_t opcode = NOP;
 
-    if (!sd_memory_init())
+    if (!sd_memory_init(file))
     {
         fprintf(stderr, "Error: Could not allocate memory for VM!\n");
         return -1;
     }
+
+    platform_init();
 
     while ((opcode = sd_memory_read_8(IPTR++)) != STOP && !halt)
     {
@@ -104,6 +107,7 @@ int sd_run(void)
         }
     }
 
+    platform_quit();
     sd_memory_free();
 
     return 0;

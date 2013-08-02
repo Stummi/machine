@@ -9,7 +9,7 @@ struct
     uint8_t * memory_;
 } sd_memory = { .memory_ = NULL };
 
-int sd_memory_init(void)
+int sd_memory_init(FILE * file)
 {
     int ptr;
 
@@ -22,7 +22,7 @@ int sd_memory_init(void)
 
     for (ptr = 0; ptr < 65536; ++ptr)
     {
-        int value = fgetc(stdin);
+        int value = fgetc(file);
         if (value == EOF)
         {
             sd_memory.memory_[ptr] = STOP;

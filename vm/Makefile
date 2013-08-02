@@ -5,8 +5,8 @@ LDFLAGS=-Os -std=c99
 
 all: stummi_vm
 
-stummi_vm: main.o register.o memory.o vm.o
-	gcc ${LDFLAGS} -o stummi_vm main.o register.o memory.o vm.o
+stummi_vm: main.o register.o memory.o vm.o platform.o
+	gcc ${LDFLAGS} -o stummi_vm main.o register.o memory.o vm.o platform.o
 
 main.o: main.c
 	gcc ${CFLAGS} -c -o main.o main.c
@@ -20,11 +20,16 @@ memory.o: memory.c
 vm.o: vm.c
 	gcc ${CFLAGS} -c -o vm.o vm.c
 
+platform.o: platform.c
+	gcc ${CFLAGS} -c -o platform.o platform.c
+
 register.c: register.h
 
 memory.c: memory.h instruction.h
 
-vm.c: vm.h instruction.h memory.h register.h
+vm.c: vm.h instruction.h memory.h register.h platform.h
+
+platform.c: platform.h
 
 main.c: vm.h
 
@@ -34,5 +39,6 @@ clean:
 	rm -f register.o
 	rm -f memory.o
 	rm -f vm.o
+	rm -f platform.o
 	rm -f stummi_vm
 
