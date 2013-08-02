@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "instruction.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -34,7 +35,7 @@ int sd_memory_init(void)
     return 1;
 }
 
-uint8_t  sd_memory_read_8(uint16_t address)
+uint8_t sd_memory_read_8(uint16_t address)
 {
     switch (address)
     {
@@ -55,14 +56,15 @@ uint8_t  sd_memory_read_8(uint16_t address)
 
 uint16_t sd_memory_read_16(uint16_t address)
 {
-    uint16_t result = sd_read_memory_8(address) << 8;
+    uint16_t result = sd_memory_read_8(address) << 8;
 
     if (address == 65535)
         address = 0;
     else
         ++address;
 
-    result |= sd_read_memory_8(address);
+    result |= sd_memory_read_8(address);
+    return result;
 }
 
 void sd_memory_write_8(uint16_t address, uint8_t value)
@@ -71,7 +73,7 @@ void sd_memory_write_8(uint16_t address, uint8_t value)
     {
     /* output device */
     case 0:
-        fputc(stdout, value);
+        fputc(value, stdout);
         sd_memory.memory_[1] = 0;
         break;
     case 1:
