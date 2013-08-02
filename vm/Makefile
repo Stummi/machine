@@ -25,7 +25,7 @@ platform.o: platform.c
 
 register.c: register.h
 
-memory.c: memory.h instruction.h
+memory.c: memory.h instruction.h platform.h
 
 vm.c: vm.h instruction.h memory.h register.h platform.h
 

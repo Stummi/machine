@@ -1,5 +1,6 @@
 #include "memory.h"
 #include "instruction.h"
+#include "platform.h"
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -46,8 +47,10 @@ uint8_t sd_memory_read_8(uint16_t address)
         break;
     /* input device */
     case 0xFC02:
+        return platform_getch() & 0xFF;
+        break;
     case 0xFC03:
-        return 0; /* currently there will never be data */
+        return platform_kbhit() & 0xFF;
         break;
     default:
         return sd_memory.memory_[address];
