@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #if defined(SD_REGISTER_DEFINITION)
-#define SD_REGISTER(name) uint16_t name
+#define SD_REGISTER(name) uint16_t name = 0
 #else
 #define SD_REGISTER(name) extern uint16_t name
 #endif

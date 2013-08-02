@@ -54,9 +54,7 @@ static void sd_irjmp(void)
 static void sd_icjmp(void)
 {
     if (ARG)
-        IPTR += 4;
-    else
-        ++IPTR;
+        IPTR += 3;
 }
 
 /* the main loop */

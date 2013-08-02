@@ -1,5 +1,7 @@
-CFLAGS=-g -D_DEBUG -std=c99 -Wall
-LDFLAGS=-g -std=c99
+#CFLAGS=-g -D_DEBUG -std=c99 -Wall
+CFLAGS=-O3 -DNDEBUG -std=c99 -Wall
+#LDFLAGS=-g -std=c99
+LDFLAGS=-Os -std=c99
 
 all: stummi_vm
 

@@ -40,13 +40,13 @@ uint8_t sd_memory_read_8(uint16_t address)
     switch (address)
     {
     /* output device */
-    case 0:
-    case 1:
+    case 0xFC00:
+    case 0xFC01:
         return sd_memory.memory_[address];
         break;
     /* input device */
-    case 2:
-    case 3:
+    case 0xFC02:
+    case 0xFC03:
         return 0; /* currently there will never be data */
         break;
     default:
@@ -72,16 +72,16 @@ void sd_memory_write_8(uint16_t address, uint8_t value)
     switch (address)
     {
     /* output device */
-    case 0:
+    case 0xFC00:
         fputc(value, stdout);
         sd_memory.memory_[1] = 0;
         break;
-    case 1:
+    case 0xFC01:
         sd_memory.memory_[1] = value ? 1 : sd_memory.memory_[1];
         break;
     /* input device */
-    case 2:
-    case 3: break;
+    case 0xFC02:
+    case 0xFC03: break;
     default:
         sd_memory.memory_[address] = value;
     }
