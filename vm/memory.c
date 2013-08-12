@@ -75,12 +75,11 @@ void sd_memory_write_8(uint16_t address, uint8_t value)
     switch (address)
     {
     /* output device */
-    case 0xFC00:
-        fputc(value, stdout);
-        sd_memory.memory_[1] = 0;
-        break;
     case 0xFC01:
-        sd_memory.memory_[1] = value ? 1 : sd_memory.memory_[1];
+        if (value) 
+        {
+            fputc(sd_memory.memory_[0xFC00], stdout);
+        }
         break;
     /* input device */
     case 0xFC02:
